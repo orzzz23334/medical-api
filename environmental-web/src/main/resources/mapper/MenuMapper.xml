@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bupt.web.dao.MenuDao">
+
+    <select id="selectMenuTreeAll" resultType="Menu">
+        select distinct m.id, m.p_id, m.`name`, m.router, m.path, m.component, m.invisible, m.is_deleted, ifnull(m.permission,'') as permission, m.type, m.icon, m.order_num, m.created_at, m.redirect
+        from menu m where m.type in ('M', 'C') and m.is_deleted = 0
+        order by m.p_id, m.order_num
+    </select>
+
+
+    <select id="selectMenuTreeByUserId" parameterType="Long" resultType="Menu">
+        select distinct m.id, m.p_id, m.`name`, m.router,m.path, m.component, m.invisible, m.is_deleted, ifnull(m.permission,'') as permission, m.type, m.icon, m.order_num, m.created_at, m.redirect
+        from menu m
+            left join role_menu rm on m.id = rm.menu_id
+            left join user_role ur on rm.role_id = ur.role_id
+            left join role ro on ur.role_id = ro.id
+            left join `user` u on ur.user_id = u.id
+        where u.id = #{userId} and  m.type in ('M', 'C') and m.is_deleted = 0 and ro.is_deleted = 0
+        order by m.p_id, m.order_num
+    </select>
+
+    <select id="selectMenuPermsByRoleId" parameterType="Long" resultType="String">
+        select distinct m.permission as operations
+        from menu m
+            left join role_menu rm on m.id = rm.menu_id
+            left join role ro on rm.role_id = ro.id
+        where m.is_deleted = 0 and ro.is_deleted = 0 and ro.id = #{roleId} and m.permission != ''
+    </select>
+
+    <select id="selectMenuListByUserId" resultType="Menu">
+        select distinct m.id, m.p_id, m.`name`, m.path, m.component, m.invisible, m.is_deleted, ifnull(m.permission,'') as permission, m.type, m.icon, m.order_num, m.created_at, m.redirect
+        from menu m
+        left join role_menu rm on m.id = rm.menu_id
+        left join user_role ur on rm.role_id = ur.role_id
+        left join role ro on ur.role_id = ro.id
+        where ur.user_id = #{userId}
+        <if test="menu.name != null and menu.name != ''">
+            AND m.name like concat('%', #{menu.name}, '%')
+        </if>
+        <if test="menu.invisible != null and menu.invisible != ''">
+            AND m.invisible = #{menu.invisible}
+        </if>
+        <if test="menu.isDeleted != null and menu.isDeleted != ''">
+            AND m.is_deleted = #{menu.isDeleted}
+        </if>
+        order by m.p_id, m.order_num
+    </select>
+
+    <select id="selectMenuListByRoleId" resultType="Long">
+        select distinct m.id
+        from menu m
+            left join role_menu rm on m.id = rm.menu_id
+          <where>
+              <if test="roleId != null">
+                  rm.role_id = #{roleId}
+              </if>
+<!--              <if test="menuCheckStrictly">-->
+<!--                  m.id not in (select m.p_id from menu m inner join role_menu rm on m.id = rm.menu_id and rm.role_id = #{roleId})-->
+<!--              </if>-->
+          </where>
+--         order by m.p_id, m.order_num
+    </select>
+
+    <select id="checkMenuExistRole" resultType="Integer">
+        select count(1) from role_menu where menu_id = #{menuId}
+    </select>
+
+    <select id="hasChildByMenuId" resultType="Integer">
+        select count(1) from menu where p_id = #{menuId}
+    </select>
+</mapper>

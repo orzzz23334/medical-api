@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bupt.web.dao.PeopleRelationTypeDao">
+
+    <select id="getAllPeopleRelationType" resultType="PeopleRelationType">
+        select *
+        from people_relation_type;
+    </select>
+    <select id="getPeopleRelationTypeByCode" resultType="PeopleRelationType">
+        select *
+        from people_relation_type
+        where code=#{code};
+    </select>
+</mapper>

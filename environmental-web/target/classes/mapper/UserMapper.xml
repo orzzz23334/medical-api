@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bupt.web.dao.UserDao">
+
+
+    <resultMap type="User" id="UserResult">
+        <id     property="id"       column="id"      />
+        <result property="name"     column="name"    />
+        <result property="password"     column="password"     />
+        <result property="isDeleted"       column="is_deleted"       />
+        <result property="createdBy"     column="created_by"    />
+        <result property="createdAt"   column="created_at"  />
+        <result property="updatedAt"     column="updated_at"    />
+        <collection  property="roleIds"   javaType="java.util.ArrayList" ofType="Long">
+            <id  column="role_id"      />
+        </collection>
+        <collection  property="roles"   javaType="java.util.ArrayList" ofType="String">
+            <id  column="role_name"      />
+        </collection>
+    </resultMap>
+
+
+
+    <sql id="selectUserVo">
+        select u.* , r.id role_id, r.`key` role_name
+        from user u
+            left join user_role ur on u.id = ur.user_id
+            left join role r on r.id = ur.role_id
+    </sql>
+
+    <select id="selectUserByUserName" parameterType="String" resultMap="UserResult">
+        <include refid="selectUserVo"/>
+        where u.name = #{userName} and u.is_deleted = 0
+    </select>
+
+    <select id="selectUserById" parameterType="Long" resultMap="UserResult">
+        <include refid="selectUserVo"/>
+        where u.id = #{userId} and u.is_deleted = 0
+    </select>
+
+    <select id="checkUserNameUnique" parameterType="String" resultType="int">
+        select count(1) from user where name = #{userName} limit 1
+    </select>
+
+    <delete id="deleteUserById" parameterType="Long">
+        update user set is_deleted = 1 where id = #{userId}
+    </delete>
+
+</mapper>

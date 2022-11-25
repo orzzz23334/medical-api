@@ -42,7 +42,7 @@ public class BiddingAnnouncementServiceImpl implements BiddingAnnouncementServic
 
     @Override
     public PageData<BiddingAnnouncement> getBiddingAnnouncementPageByFuzzySearch(BiddingAnnouncement biddingAnnouncement, PageRequest pageRequest) {
-        return new PageData<>(biddingAnnouncementDao.findBiddingAnnouncementPageByFuzzy(biddingAnnouncement.getName(), pageRequest));
+        return new PageData<>(biddingAnnouncementDao.findBiddingAnnouncementByFuzzy(biddingAnnouncement.getName(), pageRequest));
     }
 
     @Override

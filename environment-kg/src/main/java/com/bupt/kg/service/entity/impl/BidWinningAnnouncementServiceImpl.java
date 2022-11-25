@@ -43,7 +43,7 @@ public class BidWinningAnnouncementServiceImpl implements BidWinningAnnouncement
 
     @Override
     public PageData<BidWinningAnnouncement> getBidWinningAnnouncementPageByFuzzySearch(BidWinningAnnouncement bidWinningAnnouncement, PageRequest pageRequest) {
-        return new PageData<>(bidWinningAnnouncementDao.findBidWinningAnnouncementPageByFuzzy(bidWinningAnnouncement.getName(), pageRequest));
+        return new PageData<>(bidWinningAnnouncementDao.findBidWinningAnnouncementByFuzzy(bidWinningAnnouncement.getName(), pageRequest));
     }
 
     @Override

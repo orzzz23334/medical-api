@@ -141,7 +141,7 @@ public class BidServiceImpl implements BidService {
 
     @Override
     public PageData<Bid> getBidPageByFuzzySearch(Bid bid, PageRequest pageRequest) {
-        return new PageData<>(bidDao.findBidPageByFuzzy(bid.getName(), pageRequest));
+        return new PageData<>(bidDao.findBidByFuzzy(bid.getName(), pageRequest));
     }
 
     @Override
